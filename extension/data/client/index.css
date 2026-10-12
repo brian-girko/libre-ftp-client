@@ -1,0 +1,890 @@
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: ui-monospace, "Cascadia Mono", "Source Code Pro", Menlo, Consolas, monospace;
+  font-size: 13px;
+  color: #222;
+}
+
+toolbar-view,
+log-view,
+dir-view,
+transfer-view {
+  display: block;
+  padding: 8px;
+}
+
+toolbar-view,
+log-view,
+.panes {
+  border-bottom: 1px solid #ccc;
+}
+
+.panes {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+/* one pane column: crumb bar above its dir listing */
+.pane {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* the listing is a click surface: native text selection would ride the
+   shift-clicks and fight the row multi-selection */
+dir-view {
+  user-select: none;
+}
+
+.pane + .pane {
+  border-left: 1px solid #ccc;
+}
+
+/* the pane the toolbar's tools act on: an inner outline so it hugging
+ * the pane even over the inter-pane border */
+.pane.active {
+  outline: 2px solid #4a90d9;
+  outline-offset: -2px;
+}
+
+.pane dir-view {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  /* the listing is a grid whose columns stay aligned across the sticky
+   * header and every row (subgrid); rows are flush (align-content: start,
+   * short listings must not stretch their auto tracks down the tall pane)
+   * and only the columns get a 5px gap */
+  display: grid;
+  align-content: start;
+  gap: 0 5px;
+  padding: 0;
+  margin: 5px;
+  /* fallback template until dir-view.js applies the stored switches */
+  grid-template-columns: 16px minmax(0,1fr) repeat(5, auto);
+}
+
+/* the bar row: crumbs */
+.pathbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+path-view {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  padding: 5px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+/* hidden while the pane has no listing to show */
+path-view:empty {
+  display: none;
+}
+
+/* the toolbar's tools row acts on the active pane */
+toolbar-view {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+}
+
+/* page-level rules only for direct standalone buttons; combo-view styles
+ * its slotted buttons itself, the page must not touch them */
+toolbar-view > button,
+/* same rendered height as the combo (26px shadow min-height + 2px border);
+ * combo-view gets border-box here so BOTH come out exactly 28px tall */
+toolbar-view combo-view {
+  box-sizing: border-box;
+  height: 28px;
+}
+
+toolbar-view > button {
+  font: inherit;
+  font-size: 12px;
+  padding: 0 12px;
+  color: #1b1d21;
+  background: none;
+  border: 1px solid #d9dce1;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+toolbar-view > button:hover:not(:disabled) {
+  background: rgba(27, 29, 33, 0.08);
+}
+
+toolbar-view > button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* the local-dir chooser rides the toolbar's right edge: caption + select */
+.tb-dirs-wrap {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* the real display:none for the hidden state (flex fights the UA rule) */
+.tb-dirs-wrap[hidden] {
+  display: none;
+}
+
+.tb-dirs-caption {
+  font-size: 11px;
+  color: #555;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.tb-dirs {
+  font: inherit;
+  font-size: 12px;
+  box-sizing: border-box;
+  height: 28px;
+  max-width: 26ch;
+  padding: 0 6px;
+  color: #1b1d21;
+  background: #fff;
+  border: 1px solid #d9dce1;
+  border-radius: 10px;
+}
+
+.tb-dirs:disabled {
+  opacity: 0.5;
+}
+
+/* a directory dragged over the local pane: dashed ring, mirroring the
+ * active-pane outline so the user sees the drop will land there */
+dir-view.dv-drop {
+  outline: 2px dashed #4a90d9;
+  outline-offset: -2px;
+}
+
+/* the log feed: title + Clear stay put while the lines area scrolls */
+log-view {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 8px;
+  max-height: 150px;
+  flex: none;
+}
+
+.lg-title {
+  flex: none;
+  color: #555;
+  font-weight: bold;
+  user-select: none;
+}
+
+/* match the toolbar's standalone button look */
+log-view button {
+  flex: none;
+  font: inherit;
+  font-size: 11px;
+  min-height: 22px;
+  padding: 0 10px;
+  color: #1b1d21;
+  background: none;
+  border: 1px solid #d9dce1;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+log-view button:hover {
+  background: rgba(27, 29, 33, 0.08);
+}
+
+/* the lines area does the scrolling, so the title/Clear stay visible */
+.lg-rows {
+  flex: 1;
+  min-width: 0;
+  max-height: 142px;
+  overflow-y: auto;
+}
+
+.lg-row {
+  line-height: 1.4;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lg-time {
+  color: #999;
+}
+
+.lg-tag {
+  color: #555;
+}
+
+/* failures pop without losing the message text */
+.lg-row.lg-error .lg-msg {
+  color: #b00;
+}
+
+.pv-crumb {
+  cursor: pointer;
+}
+
+.pv-crumb:not(.pv-current):hover {
+  background: #e4e4e4;
+}
+
+.pv-current {
+  font-weight: bold;
+  cursor: default;
+}
+
+.pv-sep {
+  margin: 0 4px;
+  color: #999;
+}
+
+.dv-row,
+.dv-head {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid; /* inherit the pane's column tracks */
+  align-items: baseline;
+}
+
+/* sticky listing header: rows scroll underneath it */
+.dv-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #fff;
+  color: #555;
+  font-weight: bold;
+  user-select: none;
+  padding: 2px 4px;
+}
+
+.dv-row {
+  padding: 2px 4px;
+}
+
+.dv-row.dv-odd {
+  background: #f7f7f7;
+}
+
+.dv-row:hover {
+  background: #e4e4e4;
+}
+
+.dv-row.dv-selected {
+  background: #d7e3f2;
+}
+
+.dv-up,
+.dv-row.dv-dir,
+.dv-row.dv-file {
+  cursor: pointer;
+}
+
+.dv-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  /* no margin: the 16px grid track plus the 5px column gap space it */
+}
+
+/* header's empty slot over the icon track */
+.dv-icon-head {
+  color: transparent;
+}
+
+/* the name column is the only 1fr track (minmax(0,1fr) on dir-view); the
+ * other cells ride tracks sized by dir-view.js's template, so only the
+ * shared look lives here */
+.dv-cell {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dv-name {
+  color: inherit;
+}
+
+.dv-name.dv-dir-name {
+  font-weight: bold;
+}
+
+/* the metadata columns share the grey secondary look; sizes right-aligned
+ * like FileZilla, permissions bold so the glyphs read at a glance */
+.dv-size {
+  text-align: right;
+}
+
+.dv-size,
+.dv-time,
+.dv-type,
+.dv-owner {
+  color: #777;
+}
+
+.dv-perm {
+  font-weight: bold;
+  color: #555;
+}
+
+/* status/error rows and the detached start view span the whole grid */
+.dv-message,
+.dv-start {
+  grid-column: 1 / -1;
+}
+
+.dv-message {
+  padding: 4px;
+}
+
+/* the connect view is the pane's only child: overlay it instead of
+ * fighting the auto rows (dir-view is position:relative) */
+.dv-start {
+  position: absolute;
+  inset: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* detached start view: recents are a grid mirroring the listing's first
+ * tracks (icon | name | hint). rows ride those tracks via subgrid so
+ * pending hints and granted rows keep the same columns; long names
+ * truncate, the list never overflows the pane. */
+.dv-recents {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  gap: 0 5px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.dv-recents-title {
+  grid-column: 1 / -1;
+  color: #999;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.dv-recent {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dv-recent:hover {
+  background: #e4e4e4;
+}
+
+.dv-recent.dv-pending .dv-name {
+  color: #666;
+}
+
+.dv-recent-hint {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  color: #888;
+}
+
+.dv-recent-hint.dv-denied {
+  color: #b00;
+}
+
+.dv-error {
+  color: #b00;
+}
+
+/* ---------- editor dialog ---------- */
+
+#editor-dialog {
+  width: min(1200px, 85vw);
+  height: min(800px, 85vh);
+  padding: 0;
+  border: 1px solid #999;
+  display: flex; /* only when open; dialog[open] default is block */
+  flex-direction: column;
+}
+
+#editor-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+#editor-dialog:not([open]) {
+  display: none;
+}
+
+editor-view {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ed-header {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 8px;
+  border-bottom: 1px solid #ccc;
+}
+
+.ed-header button {
+  font: inherit;
+  font-size: 12px;
+  min-height: 26px;
+  padding: 0 12px;
+  color: #1b1d21;
+  background: none;
+  border: 1px solid #d9dce1;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.ed-header button:hover:not(:disabled) {
+  background: rgba(27, 29, 33, 0.08);
+}
+
+.ed-header button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ed-dirty {
+  color: #b00;
+}
+
+.ed-dirty.hidden {
+  visibility: hidden;
+}
+
+.ed-name {
+  font-weight: bold;
+}
+
+.ed-label {
+  color: #777;
+}
+
+.ed-label::after {
+  content: ':';
+}
+
+.ed-path {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #777;
+}
+
+.ed-pos {
+  margin-left: auto;
+  color: #777;
+}
+
+.ed-status {
+  color: #777;
+}
+
+.ed-status.ed-error {
+  color: #b00;
+}
+
+.ed-host {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* CodeMirror fills the host; the font comes from the page (monospace) */
+.ed-host .cm-editor {
+  height: 100%;
+}
+
+.ed-host .cm-editor.cm-focused {
+  outline: none;
+}
+
+.ed-host .cm-scroller {
+  overflow: auto;
+}
+
+/* ---------- transfer queue panel ---------- */
+
+/* hidden until the first transfer is queued (the [hidden] attribute is
+ * set by the component; this rule beats the block display above) */
+transfer-view[hidden] {
+  display: none;
+}
+
+transfer-view {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 8px 6px;
+  max-height: 190px;
+}
+
+/* the FileZilla-style tabs; stray buttons reuse the log-view pill look */
+.tf-tabs {
+  flex: none;
+  display: flex;
+  gap: 4px;
+}
+
+.tf-tab {
+  font: inherit;
+  font-size: 11px;
+  min-height: 22px;
+  padding: 0 10px;
+  color: #1b1d21;
+  background: none;
+  border: 1px solid #d9dce1;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+}
+
+.tf-tab:hover {
+  background: rgba(27, 29, 33, 0.08);
+}
+
+.tf-tab.tf-tab-on {
+  background: #d7e3f2;
+  border-color: #4a90d9;
+  font-weight: bold;
+}
+
+/* scroll host for the rows of the active tab */
+.tf-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  border: 1px solid #d9dce1;
+  border-radius: 6px;
+}
+
+.tf-row {
+  min-height: 24px;
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr) /* name */
+    15ch           /* bytes counter */
+    96px           /* progress bar */
+    6ch            /* percent */
+    minmax(0, 1fr) /* status */
+    auto           /* cancel */
+  ;
+  gap: 0 6px;
+  align-items: center;
+  padding: 2px 6px;
+}
+
+.tf-row:nth-child(even) {
+  background: #f7f7f7;
+}
+
+/* live rows carry the bar and percent — settled ones shrink to the
+   columns they still show: name + bytes (done) or name + bytes + error
+   text (failed) */
+.tf-row.tf-done {
+  grid-template-columns:
+    minmax(0, 1fr) /* name */
+    15ch           /* bytes counter */
+  ;
+}
+
+.tf-row.tf-failed {
+  grid-template-columns:
+    minmax(0, 1fr) /* name */
+    15ch           /* bytes counter */
+    minmax(0, 1fr) /* error text */
+  ;
+}
+
+.tf-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tf-size {
+  min-width: 0;
+  text-align: right;
+  color: #777;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tf-bar {
+  height: 11px;
+  border: 1px solid #c5c9cf;
+  border-radius: 6px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.tf-fill {
+  height: 100%;
+  width: 0;
+  background: #4a90d9;
+}
+
+.tf-pct {
+  text-align: right;
+  color: #555;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tf-status {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #777;
+}
+
+/* failures (incl. cancels) pop like the log's error rows */
+.tf-row.tf-failed .tf-status {
+  color: #b00;
+}
+
+.tf-cancel {
+  font: inherit;
+  font-size: 11px;
+  min-height: 20px;
+  padding: 0 8px;
+  color: #1b1d21;
+  background: none;
+  border: 1px solid #d9dce1;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.tf-cancel:hover {
+  background: rgba(176, 0, 0, 0.08);
+}
+
+/* ---------- connect dialog ---------- */
+
+#connect-dialog {
+  width: min(360px, 90vw);
+  padding: 12px;
+  border: 1px solid #999;
+  font-size: 12px;
+}
+
+#connect-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+#connect-dialog:not([open]) {
+  display: none;
+}
+
+#chmod-dialog {
+  width: min(430px, 90vw);
+  padding: 12px;
+  border: 1px solid #999;
+  font-size: 12px;
+}
+
+#chmod-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+#chmod-dialog:not([open]) {
+  display: none;
+}
+
+.cn-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.cn-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* hidden beats the flex layout above (protocol-dependent fields) */
+.cn-field[hidden] {
+  display: none;
+}
+
+.cn-label {
+  flex: none;
+  width: 90px;
+  text-align: right;
+  color: #555;
+}
+
+.cn-input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  padding: 3px 6px;
+  border: 1px solid #d9dce1;
+  border-radius: 6px;
+  background: #fff;
+  color: inherit;
+}
+
+.cn-check .cn-input {
+  flex: none;
+}
+
+/* the sftp private-key textarea shares .cn-input but carries multi-line text */
+.cn-field textarea.cn-input {
+  height: 64px;
+  resize: vertical;
+  font: inherit;
+}
+
+.cn-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.cn-footer button {
+  font: inherit;
+  font-size: 12px;
+  min-height: 26px;
+  padding: 0 12px;
+  color: #1b1d21;
+  background: none;
+  border: 1px solid #d9dce1;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.cn-footer button:hover {
+  background: rgba(27, 29, 33, 0.08);
+}
+
+/* caption naming the prefilled saved account */
+.cn-account {
+  text-align: center;
+  color: #777;
+  font-size: 11px;
+  margin: -6px 0 10px;
+}
+
+/* one-line feedback (save result, skipped unlock) */
+.cn-status {
+  text-align: center;
+  color: #555;
+  font-size: 11px;
+}
+
+.cn-status.cn-error {
+  color: #b00;
+}
+
+.cn-account:empty,
+.cn-status:empty {
+  display: none;
+}
+
+/* chmod dialog — FileZilla-style permission boxes next to the raw octal */
+.ch-target {
+  text-align: center;
+  color: #777;
+  font-size: 11px;
+  margin: -6px 0 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ch-groups {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ch-group {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #d9dce1;
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.ch-group-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 11px;
+  color: #555;
+  margin-bottom: 6px;
+  white-space: nowrap;
+}
+
+.ch-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+  cursor: pointer;
+}
+
+.ch-check input {
+  flex: none;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* the two-octet mode field: wide enough for 4 digits, mono for clarity */
+.ch-chmod .ch-oct {
+  flex: none;
+  width: 8ch;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  letter-spacing: 1px;
+}
+
+.ch-oct.ch-bad {
+  border-color: #b00;
+}
+
+.ch-preview {
+  text-align: center;
+  color: #555;
+  font-size: 11px;
+  margin-bottom: 4px;
+}

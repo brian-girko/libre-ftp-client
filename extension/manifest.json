@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Libre FTP Client",
+  "version": "0.1.0",
+  "description": "An FTP client for the browser, tunneled over a local WebSocket bridge.",
+  "permissions": ["storage", "nativeMessaging"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "icons": {
+    "16": "data/icons/16.png",
+    "32": "data/icons/32.png",
+    "48": "data/icons/48.png",
+    "64": "data/icons/64.png",
+    "128": "data/icons/128.png",
+    "256": "data/icons/256.png",
+    "512": "data/icons/512.png"
+  },
+  "action": {},
+  "options_ui": {
+    "page": "data/options/index.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "worker.mjs",
+    "type": "module"
+  }
+}

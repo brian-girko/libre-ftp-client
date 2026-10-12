@@ -1,0 +1,437 @@
+{
+  "log": {"loglevel": "none"},
+  "remarks": "UK via HSVC",
+  "routing": {
+    "rules": [{
+      "type": "field",
+      "inboundTag": ["ir-in-socks5-1070", "ir-in-mapping-1064", "ir-in-mapping-1065"],
+      "outboundTag": "ir-out-piva"
+    }, {
+      "type": "field",
+      "inboundTag": ["rck-in-tinc-55200", "rck-in-socks5-9191"],
+      "outboundTag": "rck-out"
+    }, {
+      "type": "field",
+      "inboundTag": ["v131-in-tinc-55133"],
+      "outboundTag": "v131-out-cf"
+    }, {
+      "type": "field",
+      "inboundTag": [
+        "v132-in-tinc-55132",
+        "v132-in-http-9097",
+        "v132-in-imap-9902", "v132-in-imap-9903",
+        "v132-in-socks-9090", "v132-in-socks-8989", "v132-in-socks-9999", "v132-in-socks-9696", "v132-in-socks-9595", "v132-in-socks-8787",
+        "v132-in-sync-22132",
+        "v132-in-vnc-5902"
+      ],
+      "outboundTag": "v132-out-cf"
+    }]
+  },
+  "inbounds": [{
+    "listen": "127.0.0.1",
+    "port": 55200,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "127.0.0.1",
+      "port": 656,
+      "network": "tcp"
+    },
+    "tag": "rck-in-tinc-55200"
+  }, {
+    "listen": "0.0.0.0",
+    "port": 9191,
+    "protocol": "socks",
+    "settings": {
+      "udp": true
+    },
+    "tag": "rck-in-socks5-9191"
+  }, {
+    "listen": "127.0.0.1",
+    "port": 55131,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "192.168.100.131",
+      "port": 1912,
+      "network": "tcp,udp"
+    },
+    "tag": "v131-in-tinc-55133"
+  }, {
+    "listen": "127.0.0.1",
+    "port": 55138,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "192.168.100.138",
+      "port": 655,
+      "network": "tcp,udp"
+    },
+    "tag": "v138-in-tinc-55138"
+  }, {
+    "listen": "127.0.0.1",
+    "port": 55132,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "192.168.100.132",
+      "port": 655,
+      "network": "tcp,udp"
+    },
+    "tag": "v132-in-tinc-55132"
+  }, {
+    "listen": "0.0.0.0",
+    "port": 9090,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "192.168.100.138",
+      "port": 9090,
+      "network": "tcp,udp"
+    },
+    "tag": "v132-in-socks-9090"
+  }, {
+    "listen": "0.0.0.0",
+    "port": 9902,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "imap.gmx.com",
+      "port": 993,
+      "network": "tcp"
+    },
+    "tag": "v132-in-imap-9902"
+  }, {
+    "listen": "0.0.0.0",
+    "port": 9903,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "192.168.100.135",
+      "port": 993,
+      "network": "tcp"
+    },
+    "tag": "v132-in-imap-9903"
+  }, {
+    "listen": "0.0.0.0",
+    "port": 8989,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "192.168.100.131",
+      "port": 8989,
+      "network": "tcp"
+    },
+    "tag": "v132-in-socks-8989"
+  }, {
+    "listen": "0.0.0.0",
+    "port": 9999,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "192.168.100.132",
+      "port": 9999,
+      "network": "tcp"
+    },
+    "tag": "v132-in-socks-9999"
+  }, {
+    "listen": "0.0.0.0",
+    "port": 5902,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "192.168.100.132",
+      "port": 5901,
+      "network": "tcp"
+    },
+    "tag": "v132-in-vnc-5902"
+  }, {
+    "listen": "0.0.0.0",
+    "port": 22132,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "192.168.100.132",
+      "port": 22000,
+      "network": "tcp"
+    },
+    "tag": "v132-in-sync-22132"
+  }, {
+    "listen": "0.0.0.0",
+    "port": 9696,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "192.168.100.133",
+      "port": 9696,
+      "network": "tcp"
+    },
+    "tag": "v132-in-socks-9696"
+  }, {
+    "listen": "0.0.0.0",
+    "port": 9595,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "192.168.100.135",
+      "port": 9595,
+      "network": "tcp"
+    },
+    "tag": "v132-in-socks-9595"
+  }, {
+    "listen": "0.0.0.0",
+    "port": 8787,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "192.168.100.136",
+      "port": 8787,
+      "network": "tcp"
+    },
+    "tag": "v132-in-socks-8787"
+  }, {
+    "listen": "0.0.0.0",
+    "port": 1070,
+    "protocol": "socks",
+    "settings": {
+      "udp": true
+    },
+    "tag": "ir-in-socks5-1070"
+  }, {
+    "listen": "127.0.0.1",
+    "port": 1064,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "108.162.194.186",
+      "port": 443,
+      "network": "tcp,udp"
+    },
+    "tag": "ir-in-mapping-1064"
+  }, {
+    "listen": "127.0.0.1",
+    "port": 1065,
+    "protocol": "dokodemo-door",
+    "settings": {
+      "address": "185.157.232.126",
+      "port": 22,
+      "network": "tcp,udp"
+    },
+    "tag": "ir-in-mapping-1065"
+  }],
+  "outbounds": [    {
+      "tag": "rck-out",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "port": 2053,
+            "address": "verify.pyget.com",
+            "users": [
+              {
+                "level": 0,
+                "encryption": "none",
+                "id": "db11811a-f77e-43b1-82c0-22fd03267e7d"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "verify.pyget.com"
+        },
+        "wsSettings": {
+          "path": "/handshake",
+          "headers": {
+            "Host": "verify.pyget.com"
+          }
+        }
+      }
+    }, {
+    "tag": "v131-out-cf",
+    "protocol": "vless",
+    "mux": {
+      "enabled": false
+    },
+    "settings": {
+      "vnext": [
+        {
+          "port": 443,
+          "address": "108.162.194.232",
+          "users": [
+            {
+              "level": 8,
+              "encryption": "none",
+              "id": "db11811a-f77e-43b1-82c0-22fd03267e7d"
+            }
+          ]
+        }
+      ]
+    },
+    "streamSettings": {
+      "network": "ws",
+      "security": "tls",
+      "tlsSettings": {
+        "allowInsecure": false,
+        "alpn": [
+          "http/1.1"
+        ],
+        "serverName": "service.thecloudapi.com",
+        "show": false
+      },
+      "wsSettings": {
+        "path": "/service",
+        "headers": {
+          "Host": "service.thecloudapi.com"
+        }
+      }
+    }
+  }, {
+    "tag": "v132-out-cf",
+    "protocol": "vless",
+    "mux": {
+      "enabled": false
+    },
+    "settings": {
+      "vnext": [{
+        "port": 443,
+        "address": "gen.thecloudapi.com",
+        "users": [
+          {
+            "encryption":"none",
+            "id": "db11811a-f77e-43b1-82c0-22fd03267e7d"
+          }
+        ]
+      }]
+    },
+    "streamSettings": {
+      "network": "ws",
+      "security": "tls",
+      "tlsSettings": {
+        "allowInsecure": false,
+        "serverName": "gen.thecloudapi.com",
+        "show": false
+      },
+      "sockopt": {
+        "tcpNoDelay": true
+      },
+      "wsSettings": {
+        "path": "/service",
+        "headers": {
+          "Host": "gen.thecloudapi.com"
+        }
+      }
+    }
+  }, {
+    "tag": "uk-out-direct-tcp",
+    "protocol": "vless",
+    "mux": {
+      "enabled": false
+    },
+    "settings": {
+      "vnext": [
+        {
+          "address": "127.0.0.1",
+          "port": 1065,
+          "users": [
+            {
+              "id": "db11811a-f77e-43b1-82c0-22fd03267e7d",
+              "encryption": "none"
+            }
+          ]
+        }
+      ]
+    },
+    "streamSettings": {
+      "network": "tcp",
+      "sockopt": {
+        "tcpNoDelay": true
+      }
+    }
+  }, {
+    "tag": "uk-out-direct-udp",
+    "protocol": "vless",
+    "mux": {
+      "enabled": false
+    },
+    "settings": {
+      "vnext": [{
+        "address": "127.0.0.1",
+        "port": 1065,
+        "users": [{
+          "id": "db11811a-f77e-43b1-82c0-22fd03267e7d",
+          "encryption": "none"
+        }]
+      }]
+    },
+    "streamSettings": {
+      "network": "mkcp",
+      "kcpSettings": {
+        "uplinkCapacity": 100,
+        "downlinkCapacity": 100,
+        "congestion": false
+      }
+    }
+  }, {
+    "mux": {
+      "enabled": false
+    },
+    "protocol": "vmess",
+    "settings": {
+      "vnext": [{
+        "address": "riva.darkube.ir",
+        "port": 443,
+        "users": [
+          {
+            "security": "chacha20-poly1305",
+            "id": "c7af9384-70c2-437b-aa21-ef6c1dd9d9e9"
+          }
+        ]
+      }]
+    },
+    "streamSettings": {
+      "network": "ws",
+      "security": "tls",
+      "tlsSettings": {
+        "allowInsecure": false,
+        "serverName": "riva.darkube.ir",
+        "show": false
+      },
+      "sockopt": {
+        "tcpNoDelay": true
+      },
+      "wsSettings": {
+        "headers": {
+          "Host": "riva.darkube.ir"
+        },
+        "path": "/metrics"
+      }
+    },
+    "tag": "ir-out-riva"
+  }, {
+    "mux": {
+      "enabled": false
+    },
+    "protocol": "vmess",
+    "settings": {
+      "vnext": [{
+        "address": "piva.darkube.ir",
+        "port": 443,
+        "users": [
+          {
+            "security": "chacha20-poly1305",
+            "id": "c7af9384-70c2-437b-aa21-ef6c1dd9d9e9"
+          }
+        ]
+      }]
+    },
+    "streamSettings": {
+      "network": "ws",
+      "security": "tls",
+      "tlsSettings": {
+        "allowInsecure": false,
+        "serverName": "piva.darkube.ir",
+        "show": false
+      },
+      "sockopt": {
+        "tcpNoDelay": true
+      },
+      "wsSettings": {
+        "headers": {
+          "Host": "piva.darkube.ir"
+        },
+        "path": "/metrics"
+      }
+    },
+    "tag": "ir-out-piva"
+  }]
+}
+

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Libre FTP Client — Options</title>
+  <link rel="stylesheet" type="text/css" href="index.css">
+  <script type="module" src="components/general-view.js"></script>
+  <script type="module" src="components/accounts-view.js"></script>
+  <script type="module" src="index.mjs"></script>
+</head>
+<body>
+  <h1 class="op-title">Libre FTP Client — options</h1>
+  <nav class="op-tabs">
+    <button class="op-tab op-active" data-tab="general" type="button">General</button>
+    <button class="op-tab" data-tab="accounts" type="button">Accounts</button>
+  </nav>
+  <div class="op-panel" id="general-panel">
+    <general-view></general-view>
+  </div>
+  <div class="op-panel" id="accounts-panel" hidden>
+    <accounts-view></accounts-view>
+  </div>
+</body>
+</html>

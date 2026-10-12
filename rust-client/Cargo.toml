@@ -1,0 +1,44 @@
+[package]
+name = "ftp_engine"
+version = "0.1.0"
+edition = "2021"
+description = "Rust FTP/FTPS engine compiled to wasm32-unknown-unknown for use with the ws-to-tls bridge"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+rustls = { version = "0.23", default-features = false, features = ["std", "ring", "tls12"] }
+rustls-pki-types = { version = "1", features = ["web", "alloc"] }
+ring = { version = "0.17", features = ["wasm32_unknown_unknown_js"] }
+getrandom = { version = "0.2", features = ["js"] }
+webpki-roots = "1"
+web-time = "1"
+# SFTP support: russh (SSH2 transport, explicitly wasm32-aware — uses
+# spawn_local instead of a tokio reactor — with pluggable connect_stream()
+# so no socket dialing is needed) + russh-sftp (SFTP protocol v3 client).
+# Private-key auth (encrypted OpenSSH/PuTTY keys incl.) is inside russh.
+russh = "0.52"
+russh-sftp = "2"
+# io traits used by the adapter and SFTP file chunking; russh compiles its
+# networking out on wasm32 so no runtime/reactor features are pulled.
+tokio = { version = "1", default-features = false, features = ["io-util"] }
+web-sys = { version = "0.3", features = [
+    "WebSocket",
+    "BinaryType",
+    "MessageEvent",
+    "ErrorEvent",
+    "CloseEvent",
+    "Event",
+    "console",
+] }
+
+[profile.release]
+opt-level = "s"
+lto = true

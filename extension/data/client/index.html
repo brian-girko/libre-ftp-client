@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Libre FTP Client</title>
+  <link rel="stylesheet" type="text/css" href="index.css">
+  <script type="module" src="components/toolbar-view.js"></script>
+  <script type="module" src="components/log-view.js"></script>
+  <script type="module" src="components/path-view.js"></script>
+  <script type="module" src="components/prompt-view.js"></script>
+  <script type="module" src="components/connect-view.js"></script>
+  <script type="module" src="components/chmod-view.js"></script>
+  <script type="module" src="components/dir-view.js"></script>
+  <script type="module" src="components/transfer-view.js"></script>
+</head>
+<body>
+  <toolbar-view></toolbar-view>
+  <log-view></log-view>
+  <div class="panes">
+    <div class="pane">
+      <div class="pathbar">
+        <path-view type="local"></path-view>
+      </div>
+      <dir-view type="local"></dir-view>
+    </div>
+    <div class="pane">
+      <div class="pathbar">
+        <path-view type="remote"></path-view>
+      </div>
+      <dir-view type="remote"></dir-view>
+    </div>
+  </div>
+  <transfer-view></transfer-view>
+  <dialog id="editor-dialog">
+    <editor-view></editor-view>
+  </dialog>
+  <dialog id="connect-dialog">
+    <connect-view></connect-view>
+  </dialog>
+  <dialog id="chmod-dialog">
+    <chmod-view></chmod-view>
+  </dialog>
+  <prompt-view hidden></prompt-view>
+  <script type="module" src="index.mjs"></script>
+</body>
+</html>

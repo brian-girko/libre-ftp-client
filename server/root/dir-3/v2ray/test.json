@@ -1,0 +1,45 @@
+{
+  "inbounds": [
+    {
+      "listen": "0.0.0.0",
+      "port": 1215,
+      "protocol": "socks",
+      "settings": {
+        "udp": true
+      }
+    }
+  ],
+  "outbounds": [
+
+    {
+      "tag": "proxy",
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "port": 4500,
+            "address": "192.227.193.53",
+            "users": [
+              {
+                "id": "db11811a-f77e-43b1-82c0-22fd03267e7d"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "mkcp",
+        "security": "none",
+        "mkcpSettings": {
+          "tti": 10,
+          "header": {
+            "type": "none"
+          }
+        }
+      }
+    }
+
+
+
+  ]
+}

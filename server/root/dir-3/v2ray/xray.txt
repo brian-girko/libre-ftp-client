@@ -1,0 +1,13 @@
+ip addr add 172.19.0.1/24 dev v2ray0
+
+
+ip route add 128.0.0.0/1 dev v2ray0 table wlan
+ip route add 0.0.0.0/1 dev v2ray0 table wlan
+
+ip -6 route add default dev v2ray0
+ip -6 route add ::/0 dev v2ray0 table wlan
+
+
+
+iptables -t nat -A POSTROUTING -j MASQUERADE
+ip6tables -t nat -A POSTROUTING -j MASQUERADE
